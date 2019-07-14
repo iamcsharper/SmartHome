@@ -1,4 +1,6 @@
-package com.miet.smarthome.models;
+package com.miet.smarthome.models.sensors;
+
+import com.miet.smarthome.models.Sensor;
 
 import java.text.DecimalFormat;
 
@@ -14,6 +16,8 @@ public class TemperatureSensor extends Sensor {
     public TemperatureSensor(int id, float value) {
         super(id, value);
     }
+
+    public TemperatureSensor() {}
 
     @Override
     public String formatValue(float value) {

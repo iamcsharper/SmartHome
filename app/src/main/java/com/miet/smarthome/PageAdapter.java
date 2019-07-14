@@ -1,12 +1,10 @@
 package com.miet.smarthome;
 
-import android.view.View;
-
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.PagerAdapter;
+
+import com.miet.smarthome.models.ITitleable;
 
 class PageAdapter extends FragmentPagerAdapter {
     private int tabsCount;

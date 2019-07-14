@@ -1,9 +1,10 @@
-package com.miet.smarthome.models;
-
-import android.widget.Toast;
+package com.miet.smarthome.models.intents;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.miet.smarthome.MainActivity;
+import com.miet.smarthome.models.IIntent;
+import com.miet.smarthome.models.Sensor;
+import com.miet.smarthome.models.sensors.GasSensor;
 
 public class CallIntent implements IIntent {
 

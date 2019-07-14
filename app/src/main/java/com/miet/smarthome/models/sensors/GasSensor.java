@@ -1,4 +1,6 @@
-package com.miet.smarthome.models;
+package com.miet.smarthome.models.sensors;
+
+import com.miet.smarthome.models.Sensor;
 
 import java.text.DecimalFormat;
 
@@ -19,6 +21,10 @@ public class GasSensor extends Sensor {
 
     public GasSensor(int id) {
         super(id);
+    }
+
+    public GasSensor() {
+
     }
 
 

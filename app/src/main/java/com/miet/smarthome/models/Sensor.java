@@ -1,39 +1,29 @@
 package com.miet.smarthome.models;
 
+import android.util.JsonWriter;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Sensor {
-    public int id;
-
     private static int counter = 0;
-
+    public int id;
+    public boolean isTriggered = false;
     // У каждого датчика есть свой список триггеров
     private List<Trigger> triggerList = new ArrayList<>();
-
     // Любое значение датчика можно выразить численно в виде float
     private float value;
-
-    public boolean isTriggered = false;
-
-    public float getPrev_value() {
-        return prev_value;
-    }
-
-    public void setPrev_value(float prev_value) {
-        this.prev_value = prev_value;
-    }
-
     private float prev_value;
-
-    public float getDelta() {
-        return value - prev_value;
-    }
-
     // Название датчика для человекопонятности
-    private String name;
+    private String name = "";
 
     public Sensor(int id) {
         this.id = id; // Уникальный идентификатор сенсора
@@ -55,6 +45,43 @@ public abstract class Sensor {
         this.value = value;
     }
 
+    public Sensor() {
+    }
+
+    public static Sensor fromJsonObject(JSONObject sensorObject)
+            throws JSONException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        String type = sensorObject.getString("type");
+
+        Class c = Class.forName(Sensor.class.getPackage().getName() + ".sensors." + type + "Sensor");
+        Sensor sensor = (Sensor) c.newInstance();
+
+        sensor.id = sensorObject.getInt("id");
+        sensor.setName(sensorObject.getString("name"));
+        sensor.setValue((float) sensorObject.getDouble("value"));
+
+        return sensor;
+    }
+
+    public void toJson(JsonWriter writer) throws IOException {
+        writer.beginObject();
+        writer.name("id").value(this.id);
+        writer.name("name").value(this.name);
+        writer.name("type").value(this.getClass().getSimpleName().split("Sensor")[0]);
+        writer.name("value").value(this.value);
+        writer.endObject();
+    }
+
+    public float getPrev_value() {
+        return prev_value;
+    }
+
+    public void setPrev_value(float prev_value) {
+        this.prev_value = prev_value;
+    }
+
+    public float getDelta() {
+        return value - prev_value;
+    }
 
     public void addTrigger(Trigger t) {
         triggerList.add(t);

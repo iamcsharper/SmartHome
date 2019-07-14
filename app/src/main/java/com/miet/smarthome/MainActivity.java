@@ -1,15 +1,13 @@
 package com.miet.smarthome;
 
-import android.content.Context;
-import android.os.AsyncTask;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-import com.miet.smarthome.models.CallIntent;
-import com.miet.smarthome.models.OffConditioner;
-import com.miet.smarthome.models.OnConditioner;
+import com.miet.smarthome.models.intents.CallIntent;
+import com.miet.smarthome.models.intents.OffIntent;
+import com.miet.smarthome.models.intents.OnIntent;
 import com.miet.smarthome.models.Trigger;
 import com.miet.smarthome.networking.SensorData;
 
@@ -19,18 +17,13 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     TabLayout tabLayout;
@@ -47,11 +40,31 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
 
         this.running = false;
+
+        try {
+            SettingsDatabase.getInstance().save();
+            Log.e("Main", "Saved config!");
+        } catch (IOException e) {
+            Log.e("Main", "Error saving: " + e.toString());
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        PackageManager m = getPackageManager();
+        String s = getPackageName();
+        try {
+            PackageInfo p = m.getPackageInfo(s, 0);
+            s = p.applicationInfo.dataDir;
+        } catch (PackageManager.NameNotFoundException ignored) {}
+
+        try {
+            SettingsDatabase.getInstance().load(s);
+        } catch (IOException e) {
+            Log.e("Main", Log.getStackTraceString(e));
+        }
 
         setContentView(R.layout.activity_main);
 
@@ -101,14 +114,13 @@ public class MainActivity extends AppCompatActivity {
         });*/
 
 
-        //TODO перенести в ConfigManager, загружать из конфигов.
-        List<Trigger> triggers = new ArrayList<>();
-        triggers.add(new Trigger(0, Trigger.Type.More, 1050).addIntent(new CallIntent()));
-        triggers.add(new Trigger(1, Trigger.Type.More, 30).addIntent(new OnConditioner()));
-        triggers.add(new Trigger(1, Trigger.Type.Less, 20).addIntent(new OffConditioner()));
-        SensorDatabase.getInstance().updateTriggers(triggers);
-
         makeData();
+
+        try {
+            SettingsDatabase.getInstance().save();
+        } catch (IOException e) {
+            Log.e("Main", Log.getStackTraceString(e));
+        }
     }
 
     float gas = 1000;
@@ -118,12 +130,20 @@ public class MainActivity extends AppCompatActivity {
 
     long kek = 0;
 
+
     void makeData() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (ticks > 1000) {
-                    ticks = 0;
+                if (ticks % 5000 == 0) {
+                    //TODO
+//                    try {
+//                       SettingsDatabase.getInstance().save();
+//                    } catch (IOException e) {
+//                        Log.e("MakeData", e.toString());
+//                    }
+                }
+                if (ticks % 1000 == 0) {
                     List<SensorData> sensorData = new ArrayList<>();
                     gas = (float) (1000.f+100.f*(0.5f+Math.sin(kek*628f)));
                     sensorData.add(new SensorData(0, gas));

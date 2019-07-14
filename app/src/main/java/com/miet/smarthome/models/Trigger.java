@@ -1,5 +1,14 @@
 package com.miet.smarthome.models;
 
+import android.util.JsonWriter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,23 +21,11 @@ public class Trigger {
     private float a;
     private float b;
     private Type type;
-
     private int sensorId;
 
     public Trigger(int sensorId, Type type) {
         this.sensorId = sensorId;
         this.type = type;
-    }
-
-    @Override
-    public String toString() {
-        return "Trigger{" +
-                "intentList=" + intentList +
-                ", a=" + a +
-                ", b=" + b +
-                ", type=" + type +
-                ", sensorId=" + sensorId +
-                '}';
     }
 
     public Trigger(int sensorId, Type type, float a) {
@@ -42,6 +39,63 @@ public class Trigger {
         this.type = type;
         this.a = a;
         this.b = b;
+    }
+
+    public static Trigger fromJsonObject(JSONObject triggerObject)
+            throws JSONException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        int sensorId = triggerObject.getInt("sensor_id");
+        int type = triggerObject.getInt("type");
+        float a = (float) triggerObject.getDouble("a");
+        float b = (float) triggerObject.getDouble("b");
+
+        Trigger trigger = new Trigger(sensorId, Type.values()[type], a, b);
+
+        JSONArray intents = triggerObject.getJSONArray("intents");
+
+        for (int i = 0; i < intents.length(); i++) {
+            JSONObject intentObject = (JSONObject) intents.get(i);
+            String intentType = intentObject.getString("type");
+
+            Class c = Class.forName(Trigger.class.getPackage().getName() + ".intents." + intentType + "Intent");
+            IIntent intent = (IIntent) c.newInstance();
+
+            trigger.addIntent(intent);
+        }
+
+        return trigger;
+    }
+
+    public void toJson(JsonWriter writer) throws IOException {
+        writer.beginObject();
+        writer.name("sensor_id").value(this.sensorId);
+        writer.name("type").value(this.type.ordinal());
+        writer.name("a").value(this.a);
+        writer.name("b").value(this.b);
+
+        writer.name("intents");
+        writer.beginArray();
+
+        for (int i = 0; i < intentList.size(); i++) {
+            IIntent intent = intentList.get(i);
+            writer.beginObject();
+            writer.name("type").value(intent.getClass().getSimpleName().split("Intent")[0]);
+            writer.endObject();
+        }
+
+        writer.endArray();
+
+        writer.endObject();
+    }
+
+    @Override
+    public String toString() {
+        return "Trigger{" +
+                "intentList=" + intentList +
+                ", a=" + a +
+                ", b=" + b +
+                ", type=" + type +
+                ", sensorId=" + sensorId +
+                '}';
     }
 
     public Trigger addIntent(IIntent intent) {
@@ -103,11 +157,15 @@ public class Trigger {
         return this.type.toString();
     }
 
+    public void setType(Type type) {
+        this.type = type;
+    }
+
     public enum Type {
-        Exact, // Точное значение, T = a
-        More, // Больше или равно, T >= a
-        Less, // Меньше или равно, T <= a
-        Range, // Значение из промежутка, T>=a && T <= b
-        OutOfRange, // Значение вне промежутка T<a || T > b
+        /*0*/ Exact, // Точное значение, T = a
+        /*1*/ More, // Больше или равно, T >= a
+        /*2*/ Less, // Меньше или равно, T <= a
+        /*3*/ Range, // Значение из промежутка, T>=a && T <= b
+        /*4*/ OutOfRange, // Значение вне промежутка T<a || T > b
     }
 }

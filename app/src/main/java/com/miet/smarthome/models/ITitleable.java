@@ -1,4 +1,4 @@
-package com.miet.smarthome;
+package com.miet.smarthome.models;
 
 public interface ITitleable {
     String getTitle();
