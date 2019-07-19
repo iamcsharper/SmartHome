@@ -10,12 +10,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.miet.smarthome.adapters.SettingsListAdapter;
 import com.miet.smarthome.models.ITitleable;
 
 
 public class SettingsFragment extends Fragment implements ITitleable {
     private RecyclerView settingsListView;
-    private RecyclerView.Adapter settingsListAdapter;
+    private SettingsListAdapter settingsListAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -25,21 +28,23 @@ public class SettingsFragment extends Fragment implements ITitleable {
 
         settingsListView= view.findViewById(R.id.settingsList);
 
+        FloatingActionButton fab = view.findViewById(R.id.saveButton);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Настройки сохранены.", Snackbar.LENGTH_SHORT).show();
+                SettingsDatabase.getInstance().save();
+            }
+        });
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         settingsListView.setLayoutManager(layoutManager);
         settingsListView.setHasFixedSize(true);
 
-        settingsListAdapter = new SettingsListAdapter();
-        settingsListView .setAdapter(settingsListAdapter);
-
-        /*SensorDatabase.getInstance().addDataChangedListener(new EventHandler() {
-            @Override
-            public void handle() {
-                settingsListAdapter.notifyDataSetChanged();
-            }
-        });*/
+        settingsListAdapter = new SettingsListAdapter(getActivity());
+        settingsListView.setAdapter(settingsListAdapter);
 
         return view;
     }

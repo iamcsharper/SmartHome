@@ -14,19 +14,24 @@
             android:id="@+id/accordion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
             app:el_duration="500"
             app:el_expanded="true"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/setting_item">
 
-            <TextView
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/sensorEditList"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="20sp"/>
+
+            <Button
+                android:id="@+id/add_trigger_button"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:textAllCaps="false"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:gravity="left"
-                android:minHeight="100dp"
-                android:text="Free size"
-                android:textColor="#000" />
+                android:layout_gravity="bottom|center"
+                android:text="Добавить триггер"/>
 
         </com.miet.smarthome.ExpandableLayout>
 

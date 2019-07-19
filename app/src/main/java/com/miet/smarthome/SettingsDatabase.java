@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsDatabase {
-    private static final String defaultConfig = "{\"sensors\":[{\"id\":0,\"name\":\"Газ кухня\",\"type\":\"Gas\",\"value\":954.3685913085938},{\"id\":1,\"name\":\"Темп. спальня\",\"type\":\"Temperature\",\"value\":17.0}],\"triggers\":[{\"sensor_id\":0,\"type\":1,\"a\":1050.0,\"b\":0.0,\"intents\":[{\"type\":\"Call\"}]},{\"sensor_id\":1,\"type\":1,\"a\":30.0,\"b\":0.0,\"intents\":[{\"type\":\"On\"}]},{\"sensor_id\":1,\"type\":2,\"a\":20.0,\"b\":0.0,\"intents\":[{\"type\":\"Off\"}]}]}";
+    private static final String defaultConfig = "{\"sensors\":[{\"id\":0,\"name\":\"Газ кухня\",\"type\":\"Gas\",\"value\":954.3},{\"id\":1,\"name\":\"Темп. спальня\",\"type\":\"Temperature\",\"value\":17.0}],\"triggers\":[{\"sensor_id\":0,\"type\":1,\"a\":1050.0,\"b\":0.0,\"intents\":[{\"type\":\"Call\"}]},{\"sensor_id\":1,\"type\":1,\"a\":30.0,\"b\":0.0,\"intents\":[{\"type\":\"On\"}]},{\"sensor_id\":1,\"type\":2,\"a\":20.0,\"b\":0.0,\"intents\":[{\"type\":\"Off\"}]}]}";
     private static SettingsDatabase _self = new SettingsDatabase();
     private String path;
     private File configFile;
@@ -58,9 +58,22 @@ public class SettingsDatabase {
         }
     }
 
-    public void save() throws IOException {
+    private Boolean isSaving = false;
+
+    public synchronized void save() {
+        if(isSaving) {
+            return;
+        }
+
+        isSaving = true;
         Log.d("SettingsDB", "Saving...");
-        SensorDatabase.getInstance().save(configFile);
+
+        try {
+            SensorDatabase.getInstance().save(configFile);
+        } catch (Exception e) {
+            Log.e("SettingsDB", Log.getStackTraceString(e));
+        }
+        isSaving = false;
     }
 
     // TODO split config and sensors.json files

@@ -2,13 +2,13 @@ package com.miet.smarthome.models;
 
 import android.util.JsonWriter;
 
+import com.miet.smarthome.R;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,12 +153,35 @@ public class Trigger {
         this.sensorId = sensorId;
     }
 
-    public String getType() {
-        return this.type.toString();
+    public int getHelperText() {
+        if (this.type == Type.Exact)
+            return R.string.trigger_helper_exact;
+
+        if (this.type == Type.More)
+            return R.string.trigger_helper_more;
+
+        if (this.type == Type.Less)
+            return R.string.trigger_helper_less;
+
+        if (this.type == Type.Range)
+            return R.string.trigger_helper_range;
+
+        if (this.type == Type.OutOfRange)
+            return R.string.trigger_helper_outofrange;
+
+        return -1;
+    }
+
+    public Type getType() {
+        return this.type;
     }
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public boolean needsB() {
+        return this.type == Type.Range || this.type == Type.OutOfRange;
     }
 
     public enum Type {

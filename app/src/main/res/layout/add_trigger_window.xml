@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#62def8">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/add_trigger_window_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="30dp"
+            android:gravity="center"
+            android:text="Добавление триггера"
+            android:textSize="24sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/add_trigger_window_sensor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:background="@android:drawable/btn_dropdown"
+            android:minWidth="200dp"
+            android:spinnerMode="dropdown"
+            app:layout_constraintStart_toEndOf="@+id/sensorLabel"
+            app:layout_constraintTop_toBottomOf="@+id/add_trigger_window_title" />
+
+        <TextView
+            android:id="@+id/sensorLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:width="60dp"
+            android:height="30dp"
+            android:text="Датчик:"
+            app:layout_constraintBottom_toBottomOf="@+id/add_trigger_window_sensor"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/add_trigger_window_sensor" />
+
+        <Spinner
+            android:id="@+id/add_trigger_window_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:minWidth="200dp"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"
+            app:layout_constraintStart_toStartOf="@+id/add_trigger_window_sensor"
+            app:layout_constraintTop_toBottomOf="@+id/add_trigger_window_sensor" />
+
+        <TextView
+            android:id="@+id/typeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:width="60dp"
+            android:height="30dp"
+            android:text="Тип:"
+            app:layout_constraintBottom_toBottomOf="@+id/add_trigger_window_type"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/add_trigger_window_type" />
+
+        <!-- A -->
+
+        <TextView
+            android:id="@+id/aLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:width="60dp"
+            android:height="30dp"
+            android:text="От:"
+            app:layout_constraintBottom_toBottomOf="@+id/add_trigger_window_a"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/add_trigger_window_a" />
+
+        <EditText
+            android:id="@+id/add_trigger_window_a"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="4"
+            android:layout_marginTop="10dp"
+            android:minWidth="100dp"
+            android:text="0"
+            android:inputType="numberDecimal"
+            app:layout_constraintStart_toStartOf="@+id/add_trigger_window_sensor"
+            app:layout_constraintTop_toBottomOf="@+id/add_trigger_window_type"
+            />
+
+        <!-- B -->
+
+        <TextView
+            android:id="@+id/bLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:width="60dp"
+            android:height="30dp"
+            android:text="До:"
+            app:layout_constraintBottom_toBottomOf="@+id/add_trigger_window_b"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/add_trigger_window_b" />
+
+        <EditText
+            android:id="@+id/add_trigger_window_b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="4"
+            android:text="0"
+            android:layout_marginTop="10dp"
+            android:minWidth="100dp"
+            android:inputType="numberDecimal"
+            app:layout_constraintStart_toStartOf="@+id/add_trigger_window_sensor"
+            app:layout_constraintTop_toBottomOf="@+id/add_trigger_window_a"
+            />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

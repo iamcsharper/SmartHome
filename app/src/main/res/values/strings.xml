@@ -3,5 +3,19 @@
     <string name="action_settings">Settings</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="trigger_title">Триггер</string>
+
+    <string name="trigger_helper_exact">При значении, равном этому числу, выполнится действие</string>
+    <string name="trigger_helper_more">При значении, большем или равном этому числу, выполнится действие</string>
+    <string name="trigger_helper_less">При значении, меньшем или равном этому числу, выполнится действие</string>
+    <string name="trigger_helper_range">Введите числа от и до которых выполнится действие</string>
+    <string name="trigger_helper_outofrange">Введите интервал между двумя числами, вне которого выполнится действие.</string>
+
+    <string-array name="trigger_type_names">
+        <item>Строго равно</item>
+        <item>Больше или равно</item>
+        <item>Меньше или равно</item>
+        <item>Входит в область</item>
+        <item>Вне области</item>
+    </string-array>
 </resources>

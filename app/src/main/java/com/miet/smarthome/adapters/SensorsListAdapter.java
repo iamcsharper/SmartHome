@@ -1,6 +1,5 @@
-package com.miet.smarthome;
+package com.miet.smarthome.adapters;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.miet.smarthome.R;
+import com.miet.smarthome.SensorDatabase;
 import com.miet.smarthome.models.Sensor;
 
 public class SensorsListAdapter extends RecyclerView.Adapter<SensorsListAdapter.SensorViewHolder> {
@@ -25,7 +26,7 @@ public class SensorsListAdapter extends RecyclerView.Adapter<SensorsListAdapter.
     @Override
     public void onBindViewHolder(@NonNull SensorViewHolder holder, int position) {
         Sensor sensor = SensorDatabase.sensors.get(position);
-        holder.listItemSensorView.setText(sensor.getName() + " - " + sensor.formatValue(sensor.getValue()));
+        holder.listItemSensorView.setText(sensor.getName() + ": " + sensor.formatValue(sensor.getValue()));
         if (sensor.isTriggered)
             holder.listItemSensorView.setTextColor(Color.parseColor("#ea410e"));
         else
@@ -45,10 +46,6 @@ public class SensorsListAdapter extends RecyclerView.Adapter<SensorsListAdapter.
             super(itemView);
 
             listItemSensorView = itemView.findViewById(R.id.sensor_item);
-        }
-
-        void bind(String text) {
-            listItemSensorView.setText(text);
         }
 
     }

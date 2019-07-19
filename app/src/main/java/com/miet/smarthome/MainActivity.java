@@ -3,36 +3,26 @@ package com.miet.smarthome;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import com.google.android.material.tabs.TabLayout;
-import com.miet.smarthome.models.intents.CallIntent;
-import com.miet.smarthome.models.intents.OffIntent;
-import com.miet.smarthome.models.intents.OnIntent;
-import com.miet.smarthome.models.Trigger;
-import com.miet.smarthome.networking.SensorData;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.util.Log;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
+import com.google.android.material.tabs.TabLayout;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    public static View mainView;
     TabLayout tabLayout;
     Toolbar toolbar;
     PagerAdapter pagerAdapter;
     ViewPager viewPager;
-
-    public static View mainView;
-
     boolean running = true;
 
     @Override
@@ -41,30 +31,32 @@ public class MainActivity extends AppCompatActivity {
 
         this.running = false;
 
-        try {
-            SettingsDatabase.getInstance().save();
-            Log.e("Main", "Saved config!");
-        } catch (IOException e) {
-            Log.e("Main", "Error saving: " + e.toString());
-        }
+        SettingsDatabase.getInstance().save();
+        Log.e("Main", "Saved config!");
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        PackageManager m = getPackageManager();
-        String s = getPackageName();
-        try {
-            PackageInfo p = m.getPackageInfo(s, 0);
-            s = p.applicationInfo.dataDir;
-        } catch (PackageManager.NameNotFoundException ignored) {}
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                PackageManager m = getPackageManager();
+                String s = getPackageName();
+                try {
+                    PackageInfo p = m.getPackageInfo(s, 0);
+                    s = p.applicationInfo.dataDir;
+                } catch (PackageManager.NameNotFoundException ignored) {
+                }
 
-        try {
-            SettingsDatabase.getInstance().load(s);
-        } catch (IOException e) {
-            Log.e("Main", Log.getStackTraceString(e));
-        }
+                try {
+                    SettingsDatabase.getInstance().load(s);
+                } catch (IOException e) {
+                    Log.e("Main", Log.getStackTraceString(e));
+                }
+            }
+        }).start();
 
         setContentView(R.layout.activity_main);
 
@@ -98,80 +90,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-      /*  FloatingActionButton fab = findViewById(R.id.fab);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Установлена аццкая температура.", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
-                List<SensorData> sensorData = new ArrayList<>();
-                sensorData.add(new SensorData(0, 1128));
-                sensorData.add(new SensorData(1, 50));
-                SensorDatabase.getInstance().updateSensors(sensorData);
-            }
-        });*/
-
-
-        makeData();
-
-        try {
-            SettingsDatabase.getInstance().save();
-        } catch (IOException e) {
-            Log.e("Main", Log.getStackTraceString(e));
-        }
-    }
-
-    float gas = 1000;
-    float temp = 12;
-    int inc = 1;
-    long ticks = 0;
-
-    long kek = 0;
-
-
-    void makeData() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (ticks % 5000 == 0) {
-                    //TODO
-//                    try {
-//                       SettingsDatabase.getInstance().save();
-//                    } catch (IOException e) {
-//                        Log.e("MakeData", e.toString());
-//                    }
-                }
-                if (ticks % 1000 == 0) {
-                    List<SensorData> sensorData = new ArrayList<>();
-                    gas = (float) (1000.f+100.f*(0.5f+Math.sin(kek*628f)));
-                    sensorData.add(new SensorData(0, gas));
-                    sensorData.add(new SensorData(1, temp += inc));
-
-                    SensorDatabase.getInstance().updateSensors(sensorData);
-
-
-                    if (temp < 10) {
-                        inc = 1;
-                    }
-                    if (temp > 40) {
-                        inc = -1;
-                    }
-                    kek++;
-                }
-
-                (new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        makeData();
-                    }
-                })).start();
-
-
-                ticks++;
-            }
-        });
+        // Вызов чтобы создать файлы если еще не созданы
+        SettingsDatabase.getInstance().save();
     }
 
     @Override

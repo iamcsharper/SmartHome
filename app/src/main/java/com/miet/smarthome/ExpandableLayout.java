@@ -9,43 +9,31 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.AnticipateInterpolator;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
+
 import static com.miet.smarthome.ExpandableLayout.State.COLLAPSED;
 import static com.miet.smarthome.ExpandableLayout.State.COLLAPSING;
-import static com.miet.smarthome.ExpandableLayout.State.EXPANDING;
 import static com.miet.smarthome.ExpandableLayout.State.EXPANDED;
+import static com.miet.smarthome.ExpandableLayout.State.EXPANDING;
 
 public class ExpandableLayout extends FrameLayout {
-    public interface State {
-        int COLLAPSED = 0;
-        int COLLAPSING = 1;
-        int EXPANDING = 2;
-        int EXPANDED = 3;
-    }
-
     public static final String KEY_SUPER_STATE = "super_state";
     public static final String KEY_EXPANSION = "expansion";
-
     public static final int HORIZONTAL = 0;
     public static final int VERTICAL = 1;
-
     private static final int DEFAULT_DURATION = 300;
-
     private int duration = DEFAULT_DURATION;
     private float parallax;
     private float expansion;
     private int orientation;
     private int state;
-
-    private Interpolator interpolator = new OvershootInterpolator();
+    private Interpolator interpolator = new LinearOutSlowInInterpolator();
     private ValueAnimator animator;
-
     private OnExpansionUpdateListener listener;
 
     public ExpandableLayout(Context context) {
@@ -147,6 +135,13 @@ public class ExpandableLayout extends FrameLayout {
         return state == EXPANDING || state == EXPANDED;
     }
 
+    /**
+     * Convenience method - same as calling setExpanded(expanded, true)
+     */
+    public void setExpanded(boolean expand) {
+        setExpanded(expand, true);
+    }
+
     public void toggle() {
         toggle(true);
     }
@@ -175,13 +170,6 @@ public class ExpandableLayout extends FrameLayout {
         setExpanded(false, animate);
     }
 
-    /**
-     * Convenience method - same as calling setExpanded(expanded, true)
-     */
-    public void setExpanded(boolean expand) {
-        setExpanded(expand, true);
-    }
-
     public void setExpanded(boolean expand, boolean animate) {
         if (expand == isExpanded()) {
             return;
@@ -199,12 +187,12 @@ public class ExpandableLayout extends FrameLayout {
         return duration;
     }
 
-    public void setInterpolator(Interpolator interpolator) {
-        this.interpolator = interpolator;
-    }
-
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public void setInterpolator(Interpolator interpolator) {
+        this.interpolator = interpolator;
     }
 
     public float getExpansion() {
@@ -282,6 +270,13 @@ public class ExpandableLayout extends FrameLayout {
         animator.addListener(new ExpansionListener(targetExpansion));
 
         animator.start();
+    }
+
+    public interface State {
+        int COLLAPSED = 0;
+        int COLLAPSING = 1;
+        int EXPANDING = 2;
+        int EXPANDED = 3;
     }
 
     public interface OnExpansionUpdateListener {
