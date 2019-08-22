@@ -11,6 +11,9 @@
     <string name="trigger_helper_range">Введите числа от и до которых выполнится действие</string>
     <string name="trigger_helper_outofrange">Введите интервал между двумя числами, вне которого выполнится действие.</string>
 
+    <string name="trigger_single_num">Число</string>
+    <string name="trigger_double_num">От</string>
+
     <string-array name="trigger_type_names">
         <item>Строго равно</item>
         <item>Больше или равно</item>

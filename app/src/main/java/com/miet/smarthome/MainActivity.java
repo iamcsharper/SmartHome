@@ -30,9 +30,6 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
 
         this.running = false;
-
-        SettingsDatabase.getInstance().save();
-        Log.e("Main", "Saved config!");
     }
 
     @Override
@@ -91,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Вызов чтобы создать файлы если еще не созданы
-        SettingsDatabase.getInstance().save();
+        //SettingsDatabase.getInstance().save();
     }
 
     @Override

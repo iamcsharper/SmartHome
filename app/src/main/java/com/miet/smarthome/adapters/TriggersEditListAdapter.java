@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -18,14 +19,14 @@ import com.miet.smarthome.R;
 import com.miet.smarthome.models.Sensor;
 import com.miet.smarthome.models.Trigger;
 
-public class SensorEditAdapter extends RecyclerView.Adapter<SensorEditAdapter.SensorEditViewHolder> {
+public class TriggersEditListAdapter extends RecyclerView.Adapter<TriggersEditListAdapter.SensorEditViewHolder> {
 
     private SparseArray<Boolean> defaultValues = new SparseArray<Boolean>();
     private Sensor sensor;
     private ArrayAdapter<CharSequence> charSequenceArrayAdapter;
     private Context context;
 
-    public SensorEditAdapter(Context context) {
+    public TriggersEditListAdapter(Context context) {
         this.context = context;
 
         charSequenceArrayAdapter = ArrayAdapter.createFromResource(this.context,
@@ -44,17 +45,18 @@ public class SensorEditAdapter extends RecyclerView.Adapter<SensorEditAdapter.Se
 
     @NonNull
     @Override
-    public SensorEditAdapter.SensorEditViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public TriggersEditListAdapter.SensorEditViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         View view = inflater.inflate(R.layout.settings_edit_sensor_item, parent, false);
-        return new SensorEditAdapter.SensorEditViewHolder(view);
+        return new TriggersEditListAdapter.SensorEditViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SensorEditAdapter.SensorEditViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TriggersEditListAdapter.SensorEditViewHolder holder, int position) {
         Trigger trigger = sensor.getTriggerList().get(position);
 
+        holder.setPos(position);
         holder.helperText.setText(context.getString(trigger.getHelperText()));
 
         holder.listener.setTriggerPos(position);
@@ -106,27 +108,68 @@ public class SensorEditAdapter extends RecyclerView.Adapter<SensorEditAdapter.Se
 
     }
 
-    class SensorEditViewHolder extends RecyclerView.ViewHolder {
+    class SensorEditViewHolder extends RecyclerView.ViewHolder  {
 
         TextView listItemSensorView;
         EditText sensor_input_a, sensor_input_b;
         Spinner triggerTypeView;
         TriggerTypeChangeListener listener;
         TextView helperText;
+        Button buttonRemove;
+
+        int pos;
+
+        public int getPos() {
+            return pos;
+        }
+
+        public void setPos(int pos) {
+            this.pos = pos;
+        }
 
         public SensorEditViewHolder(@NonNull View itemView) {
             super(itemView);
 
             helperText = itemView.findViewById(R.id.helperText);
             sensor_input_a = itemView.findViewById(R.id.sensor_input_a);
+
+            sensor_input_a.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (!hasFocus) {
+                        sensor.getTriggerList().get(pos).setA(
+                                Float.parseFloat(sensor_input_a.getText().toString()));
+                    }
+                }
+            });
+
             sensor_input_b = itemView.findViewById(R.id.sensor_input_b);
+            sensor_input_b.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (!hasFocus) {
+                        sensor.getTriggerList().get(pos).setB(
+                                Float.parseFloat(sensor_input_b.getText().toString()));
+                    }
+                }
+            });
+
             listItemSensorView = itemView.findViewById(R.id.settings_edit_label);
             triggerTypeView = itemView.findViewById(R.id.sensor_edit_trigger_type);
             triggerTypeView.setAdapter(charSequenceArrayAdapter);
-
             listener = new TriggerTypeChangeListener();
             triggerTypeView.setOnItemSelectedListener(listener);
-        }
 
+            buttonRemove = itemView.findViewById(R.id.buttonRemove);
+
+            buttonRemove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sensor.removeTrigger(pos);
+                    notifyDataSetChanged();
+                    view.invalidate();
+                }
+            });
+        }
     }
 }

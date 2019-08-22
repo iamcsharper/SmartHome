@@ -144,4 +144,8 @@ public abstract class Sensor {
                 ", name='" + name + '\'' +
                 '}';
     }
+
+    public void removeTrigger(int pos) {
+        this.triggerList.remove(pos);
+    }
 }

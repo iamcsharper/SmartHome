@@ -23,6 +23,8 @@ public class Trigger {
     private Type type;
     private int sensorId;
 
+    public Trigger() {}
+
     public Trigger(int sensorId, Type type) {
         this.sensorId = sensorId;
         this.type = type;

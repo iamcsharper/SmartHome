@@ -11,7 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -22,10 +21,6 @@ public class SensorDatabase {
     public static final List<Sensor> sensors = new ArrayList<>();
     private static final SensorDatabase ourInstance = new SensorDatabase();
     private List<EventHandler> onDataChangedListeners = new ArrayList<>();
-
-    private SensorDatabase() {
-
-    }
 
     public static SensorDatabase getInstance() {
         return ourInstance;
@@ -57,9 +52,27 @@ public class SensorDatabase {
         }
     }
 
+    public Sensor getSensor(int pos) {
+        return sensors.get(pos);
+    }
+
+    public int size() {
+        return sensors.size();
+    }
+
     public synchronized void addSensor(Sensor sensor) {
         synchronized (sensors) {
             sensors.add(sensor);
+        }
+
+        for (EventHandler listener : onDataChangedListeners) {
+            listener.handle();
+        }
+    }
+
+    public synchronized void removeSensor(int i) {
+        synchronized (sensors) {
+            sensors.remove(i);
         }
 
         for (EventHandler listener : onDataChangedListeners) {
@@ -121,9 +134,9 @@ public class SensorDatabase {
         updateTriggers(triggerList);
     }
 
-    void save(File to) throws IOException {
+    synchronized void save() throws IOException {
         Log.d("SensorDB", "Saving...");
-        FileOutputStream fos = new FileOutputStream(to);
+        FileOutputStream fos = new FileOutputStream(SettingsDatabase.getInstance().getConfigFile());
         JsonWriter writer = new JsonWriter(new OutputStreamWriter(fos, "UTF-8"));
         writer.setIndent("  ");
         writer.beginObject();

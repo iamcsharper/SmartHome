@@ -1,14 +1,9 @@
 package com.miet.smarthome;
 
+import android.provider.Settings;
 import android.util.Log;
 
 import com.miet.smarthome.io.IOUtils;
-import com.miet.smarthome.models.Trigger;
-import com.miet.smarthome.models.intents.CallIntent;
-import com.miet.smarthome.models.intents.OffIntent;
-import com.miet.smarthome.models.intents.OnIntent;
-import com.miet.smarthome.models.sensors.GasSensor;
-import com.miet.smarthome.models.sensors.TemperatureSensor;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,14 +12,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SettingsDatabase {
     private static final String defaultConfig = "{\"sensors\":[{\"id\":0,\"name\":\"Газ кухня\",\"type\":\"Gas\",\"value\":954.3},{\"id\":1,\"name\":\"Темп. спальня\",\"type\":\"Temperature\",\"value\":17.0}],\"triggers\":[{\"sensor_id\":0,\"type\":1,\"a\":1050.0,\"b\":0.0,\"intents\":[{\"type\":\"Call\"}]},{\"sensor_id\":1,\"type\":1,\"a\":30.0,\"b\":0.0,\"intents\":[{\"type\":\"On\"}]},{\"sensor_id\":1,\"type\":2,\"a\":20.0,\"b\":0.0,\"intents\":[{\"type\":\"Off\"}]}]}";
     private static SettingsDatabase _self = new SettingsDatabase();
+    private static boolean isLoaded = false;
     private String path;
     private File configFile;
+    private Boolean isSaving = false;
+
+    public File getConfigFile() {
+        return configFile;
+    }
 
     private SettingsDatabase() {
         // TODO load from file.
@@ -36,6 +35,10 @@ public class SettingsDatabase {
     }
 
     public void load(String path) throws IOException {
+        if (isLoaded)
+            return;
+
+        isLoaded = true;
         this.path = path + '/';
         this.configFile = new File(this.path + "sensors.json");
 
@@ -58,10 +61,12 @@ public class SettingsDatabase {
         }
     }
 
-    private Boolean isSaving = false;
+    public boolean isSaving() {
+        return isSaving;
+    }
 
     public synchronized void save() {
-        if(isSaving) {
+        if (isSaving) {
             return;
         }
 
@@ -69,7 +74,7 @@ public class SettingsDatabase {
         Log.d("SettingsDB", "Saving...");
 
         try {
-            SensorDatabase.getInstance().save(configFile);
+            SensorDatabase.getInstance().save();
         } catch (Exception e) {
             Log.e("SettingsDB", Log.getStackTraceString(e));
         }
